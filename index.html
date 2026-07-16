@@ -8,14 +8,18 @@
     <meta name="apple-mobile-web-app-title" content="Video Delay">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Video Delay</title>
-    <link rel="manifest" href="./manifest.webmanifest?v=31">
-    <link rel="stylesheet" href="./style.css?v=31">
+    <link rel="manifest" href="./manifest.webmanifest?v=32">
+    <link rel="stylesheet" href="./style.css?v=32">
   </head>
   <body>
     <main class="app">
       <video id="sourceVideo" playsinline muted></video>
       <canvas id="delayCanvas"></canvas>
       <canvas id="drawCanvas" aria-label="Guide line drawing"></canvas>
+      <div class="livePreview" aria-label="Live camera preview">
+        <video id="livePreviewVideo" playsinline muted></video>
+        <span>Live</span>
+      </div>
       <a class="liveLogoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Open Archery Love YouTube channel">
         <img class="liveLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
       </a>
@@ -51,6 +55,7 @@
       <section class="controls" aria-label="Controls">
         <button id="cameraButton" title="Switch camera"><span class="buttonIcon">↺</span><span class="buttonText">Cam</span></button>
         <button id="mirrorButton" title="Mirror image"><span class="buttonIcon">⇄</span><span class="buttonText">Mir</span></button>
+        <button id="delayToggleButton" title="Turn delay on or off"><span class="buttonIcon">◷</span><span class="buttonText">Delay</span></button>
         <button id="pauseButton" title="Pause"><span class="buttonIcon">Ⅱ</span><span class="buttonText">Pause</span></button>
         <button id="playBufferButton" title="Play from selected frame"><span class="buttonIcon">▶</span><span class="buttonText">Play</span></button>
         <button id="speedButton" title="Playback speed"><span class="buttonIcon">×</span><span class="buttonText">1</span></button>
@@ -70,6 +75,6 @@
       </section>
     </main>
 
-    <script src="./app.js?v=31"></script>
+    <script src="./app.js?v=32"></script>
   </body>
 </html>
