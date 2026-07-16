@@ -8,8 +8,8 @@
     <meta name="apple-mobile-web-app-title" content="Video Delay">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Video Delay</title>
-    <link rel="manifest" href="./manifest.webmanifest?v=26">
-    <link rel="stylesheet" href="./style.css?v=26">
+    <link rel="manifest" href="./manifest.webmanifest?v=27">
+    <link rel="stylesheet" href="./style.css?v=27">
   </head>
   <body>
     <main class="app">
@@ -26,7 +26,7 @@
         </a>
         <h1>Video Delay</h1>
         <p>Oneskoreny obraz z kamery pre iPad.</p>
-        <button id="startButton" class="primary">Spustit kameru</button>
+        <button id="startButton" class="primary">▶ Spustit kameru</button>
         <p id="statusText" class="status">Safari sa opyta na povolenie kamery.</p>
       </section>
 
@@ -38,22 +38,22 @@
           <div class="badge" id="cameraLabel">Kamera</div>
         </div>
         <div class="drawTools" aria-label="Kreslenie">
-          <button id="drawButton" title="Zapnut alebo vypnut kreslenie">Draw</button>
-          <button id="drawModeButton" title="Kreslit rovnu ciaru">Line</button>
-          <button id="freeDrawButton" title="Volne kreslenie">Free</button>
-          <button id="colorButton" title="Farba ciary">Yellow</button>
-          <button id="undoDrawButton" title="Zrusit poslednu ciaru">Undo</button>
-          <button id="clearDrawButton" title="Vymazat ciary">Clear</button>
+          <button id="drawButton" title="Zapnut alebo vypnut kreslenie">✎ Draw</button>
+          <button id="drawModeButton" title="Kreslit rovnu ciaru">╱ Line</button>
+          <button id="freeDrawButton" title="Volne kreslenie">~ Free</button>
+          <button id="colorButton" title="Farba ciary">● Yellow</button>
+          <button id="undoDrawButton" title="Zrusit poslednu ciaru">↶ Undo</button>
+          <button id="clearDrawButton" title="Vymazat ciary">× Clear</button>
         </div>
         <div class="badge" id="bufferLabel">Buffer 0 s</div>
       </div>
 
       <section class="controls" aria-label="Ovladanie">
-        <button id="cameraButton" title="Prepnut kameru">Cam</button>
-        <button id="mirrorButton" title="Zrkadlenie">Mir</button>
-        <button id="pauseButton" title="Pauza">Pause</button>
-        <button id="playBufferButton" title="Prehrat od frame">Play</button>
-        <button id="speedButton" title="Rychlost prehravania">1x</button>
+        <button id="cameraButton" title="Prepnut kameru">↺ Cam</button>
+        <button id="mirrorButton" title="Zrkadlenie">⇄ Mir</button>
+        <button id="pauseButton" title="Pauza">Ⅱ Pause</button>
+        <button id="playBufferButton" title="Prehrat od frame">▶ Play</button>
+        <button id="speedButton" title="Rychlost prehravania">×1</button>
 
         <label class="frameControl">
           <span id="frameLabel">Frame --</span>
@@ -65,11 +65,11 @@
           <input id="delaySlider" type="range" min="0" max="5" step="1" value="3">
         </label>
 
-        <button id="fitButton" title="Vyplnit obraz">Fit</button>
-        <button id="fullscreenButton" title="Cela obrazovka">Full</button>
+        <button id="fitButton" title="Vyplnit obraz">▣ Fit</button>
+        <button id="fullscreenButton" title="Cela obrazovka">⛶ Full</button>
       </section>
     </main>
 
-    <script src="./app.js?v=26"></script>
+    <script src="./app.js?v=27"></script>
   </body>
 </html>

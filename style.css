@@ -44,6 +44,10 @@ input {
   font: inherit;
 }
 
+button {
+  white-space: nowrap;
+}
+
 .app {
   position: fixed;
   inset: 0;
