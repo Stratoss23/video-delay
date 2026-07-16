@@ -57,9 +57,9 @@ const CAMERA_FPS = 60;
 const MAX_DELAY_SECONDS = 5;
 
 const playbackSpeeds = [
-  { label: "×1", multiplier: 1 },
-  { label: "×0.5", multiplier: 0.5 },
-  { label: "×0.25", multiplier: 0.25 }
+  { label: "1", multiplier: 1 },
+  { label: "0.5", multiplier: 0.5 },
+  { label: "0.25", multiplier: 0.25 }
 ];
 
 const drawColors = [
@@ -71,6 +71,10 @@ const drawColors = [
 
 function setStatus(message) {
   statusText.textContent = message;
+}
+
+function setButtonLabel(button, icon, text) {
+  button.innerHTML = `<span class="buttonIcon">${icon}</span><span class="buttonText">${text}</span>`;
 }
 
 function applyFillMode() {
@@ -87,12 +91,12 @@ function updateLabels() {
   delayLabel.textContent = `Delay ${delaySeconds} s`;
   cameraLabel.textContent = `${facingMode === "user" ? "Predna" : "Zadna"} 1080/60`;
   mirrorButton.classList.toggle("active", mirrored);
-  pauseButton.textContent = paused ? "● Live" : "Ⅱ Pause";
+  setButtonLabel(pauseButton, paused ? "●" : "Ⅱ", paused ? "Live" : "Pause");
   pauseButton.classList.toggle("active", paused);
   playBufferButton.disabled = !paused || frames.length < 2;
-  playBufferButton.textContent = bufferPlaying ? "■ Stop" : "▶ Play";
+  setButtonLabel(playBufferButton, bufferPlaying ? "■" : "▶", bufferPlaying ? "Stop" : "Play");
   playBufferButton.classList.toggle("active", bufferPlaying);
-  speedButton.textContent = playbackSpeeds[playbackSpeedIndex].label;
+  setButtonLabel(speedButton, "×", playbackSpeeds[playbackSpeedIndex].label);
   speedButton.disabled = !paused;
   frameSlider.disabled = !paused || frames.length < 2;
   frameSlider.max = String(Math.max(0, frames.length - 1));
@@ -101,14 +105,18 @@ function updateLabels() {
     ? `Frame ${pausedFrameIndex + 1}/${frames.length}`
     : "Frame --";
   fitButton.classList.toggle("active", fillMode);
-  fitButton.textContent = fillMode ? "▣ Fit" : "▦ Fill";
+  setButtonLabel(fitButton, fillMode ? "▣" : "▦", fillMode ? "Fit" : "Fill");
   fitButton.title = fillMode ? "Zobrazit cely zaber" : "Vyplnit obraz";
   drawButton.classList.toggle("active", drawMode);
   drawCanvas.classList.toggle("enabled", drawMode);
-  drawModeButton.textContent = "╱ Line";
+  setButtonLabel(drawButton, "✎", "Draw");
+  setButtonLabel(drawModeButton, "╱", "Line");
+  setButtonLabel(freeDrawButton, "~", "Free");
+  setButtonLabel(undoDrawButton, "↶", "Undo");
+  setButtonLabel(clearDrawButton, "×", "Clear");
   drawModeButton.classList.toggle("active", drawShapeMode === "line");
   freeDrawButton.classList.toggle("active", drawShapeMode === "free");
-  colorButton.textContent = `● ${drawColors[drawColorIndex].label}`;
+  setButtonLabel(colorButton, "🎨", drawColors[drawColorIndex].label);
   colorButton.style.setProperty("--draw-color", drawColors[drawColorIndex].value);
   undoDrawButton.disabled = guideLines.length === 0;
   clearDrawButton.disabled = guideLines.length === 0;

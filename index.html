@@ -8,8 +8,8 @@
     <meta name="apple-mobile-web-app-title" content="Video Delay">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Video Delay</title>
-    <link rel="manifest" href="./manifest.webmanifest?v=27">
-    <link rel="stylesheet" href="./style.css?v=27">
+    <link rel="manifest" href="./manifest.webmanifest?v=28">
+    <link rel="stylesheet" href="./style.css?v=28">
   </head>
   <body>
     <main class="app">
@@ -26,7 +26,7 @@
         </a>
         <h1>Video Delay</h1>
         <p>Oneskoreny obraz z kamery pre iPad.</p>
-        <button id="startButton" class="primary">▶ Spustit kameru</button>
+        <button id="startButton" class="primary"><span class="buttonIcon">▶</span><span class="buttonText">Spustit kameru</span></button>
         <p id="statusText" class="status">Safari sa opyta na povolenie kamery.</p>
       </section>
 
@@ -38,22 +38,22 @@
           <div class="badge" id="cameraLabel">Kamera</div>
         </div>
         <div class="drawTools" aria-label="Kreslenie">
-          <button id="drawButton" title="Zapnut alebo vypnut kreslenie">✎ Draw</button>
-          <button id="drawModeButton" title="Kreslit rovnu ciaru">╱ Line</button>
-          <button id="freeDrawButton" title="Volne kreslenie">~ Free</button>
-          <button id="colorButton" title="Farba ciary">● Yellow</button>
-          <button id="undoDrawButton" title="Zrusit poslednu ciaru">↶ Undo</button>
-          <button id="clearDrawButton" title="Vymazat ciary">× Clear</button>
+          <button id="drawButton" title="Zapnut alebo vypnut kreslenie"><span class="buttonIcon">✎</span><span class="buttonText">Draw</span></button>
+          <button id="drawModeButton" title="Kreslit rovnu ciaru"><span class="buttonIcon">╱</span><span class="buttonText">Line</span></button>
+          <button id="freeDrawButton" title="Volne kreslenie"><span class="buttonIcon">~</span><span class="buttonText">Free</span></button>
+          <button id="colorButton" title="Farba ciary"><span class="buttonIcon">🎨</span><span class="buttonText">Yellow</span></button>
+          <button id="undoDrawButton" title="Zrusit poslednu ciaru"><span class="buttonIcon">↶</span><span class="buttonText">Undo</span></button>
+          <button id="clearDrawButton" title="Vymazat ciary"><span class="buttonIcon">×</span><span class="buttonText">Clear</span></button>
         </div>
         <div class="badge" id="bufferLabel">Buffer 0 s</div>
       </div>
 
       <section class="controls" aria-label="Ovladanie">
-        <button id="cameraButton" title="Prepnut kameru">↺ Cam</button>
-        <button id="mirrorButton" title="Zrkadlenie">⇄ Mir</button>
-        <button id="pauseButton" title="Pauza">Ⅱ Pause</button>
-        <button id="playBufferButton" title="Prehrat od frame">▶ Play</button>
-        <button id="speedButton" title="Rychlost prehravania">×1</button>
+        <button id="cameraButton" title="Prepnut kameru"><span class="buttonIcon">↺</span><span class="buttonText">Cam</span></button>
+        <button id="mirrorButton" title="Zrkadlenie"><span class="buttonIcon">⇄</span><span class="buttonText">Mir</span></button>
+        <button id="pauseButton" title="Pauza"><span class="buttonIcon">Ⅱ</span><span class="buttonText">Pause</span></button>
+        <button id="playBufferButton" title="Prehrat od frame"><span class="buttonIcon">▶</span><span class="buttonText">Play</span></button>
+        <button id="speedButton" title="Rychlost prehravania"><span class="buttonIcon">×</span><span class="buttonText">1</span></button>
 
         <label class="frameControl">
           <span id="frameLabel">Frame --</span>
@@ -65,11 +65,11 @@
           <input id="delaySlider" type="range" min="0" max="5" step="1" value="3">
         </label>
 
-        <button id="fitButton" title="Vyplnit obraz">▣ Fit</button>
-        <button id="fullscreenButton" title="Cela obrazovka">⛶ Full</button>
+        <button id="fitButton" title="Vyplnit obraz"><span class="buttonIcon">▣</span><span class="buttonText">Fit</span></button>
+        <button id="fullscreenButton" title="Cela obrazovka"><span class="buttonIcon">⛶</span><span class="buttonText">Full</span></button>
       </section>
     </main>
 
-    <script src="./app.js?v=27"></script>
+    <script src="./app.js?v=28"></script>
   </body>
 </html>

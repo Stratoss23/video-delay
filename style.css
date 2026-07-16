@@ -48,6 +48,31 @@ button {
   white-space: nowrap;
 }
 
+.buttonIcon,
+.buttonText {
+  display: block;
+  line-height: 1;
+}
+
+.buttonIcon {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.buttonText {
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.primary .buttonIcon {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.primary .buttonText {
+  font-size: 15px;
+}
+
 .app {
   position: fixed;
   inset: 0;
@@ -249,8 +274,8 @@ body.fill #delayCanvas {
 
 .drawTools button {
   min-width: 68px;
-  min-height: 38px;
-  padding: 0 12px;
+  min-height: 52px;
+  padding: 7px 12px 6px;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--text);
@@ -260,6 +285,14 @@ body.fill #delayCanvas {
   letter-spacing: 0;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+}
+
+.drawTools .buttonIcon {
+  font-size: 20px;
+}
+
+.drawTools .buttonText {
+  font-size: 10px;
 }
 
 .drawTools button.active {
@@ -355,7 +388,7 @@ body.fill #delayCanvas {
 
 #pauseButton,
 #playBufferButton {
-  height: 64px;
+  height: 68px;
   font-size: 15px;
 }
 
