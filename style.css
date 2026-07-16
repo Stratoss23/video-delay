@@ -402,7 +402,7 @@ body.fill #delayCanvas {
   right: max(14px, env(safe-area-inset-right));
   bottom: max(14px, env(safe-area-inset-bottom));
   display: grid;
-  grid-template-columns: 64px 56px 68px 82px 82px 64px minmax(160px, 1fr) minmax(180px, 1fr) 58px 64px;
+  grid-template-columns: 64px 56px 82px 82px 64px minmax(170px, 1fr) minmax(190px, 1fr) 58px 64px;
   align-items: center;
   gap: 10px;
   padding: 12px;
@@ -449,18 +449,6 @@ body.fill #delayCanvas {
 
 #mirrorButton {
   background: linear-gradient(180deg, rgba(244, 236, 212, 0.24), rgba(244, 236, 212, 0.08));
-}
-
-#delayToggleButton {
-  color: #171005;
-  background: linear-gradient(180deg, #ffe879, var(--gold));
-  border-color: rgba(255, 232, 122, 0.75);
-}
-
-#delayToggleButton.active {
-  color: #f9fbff;
-  background: linear-gradient(180deg, #3f8dff, var(--blue));
-  border-color: rgba(105, 164, 255, 0.72);
 }
 
 #pauseButton,

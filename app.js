@@ -10,7 +10,6 @@ const startButton = document.getElementById("startButton");
 const statusText = document.getElementById("statusText");
 const cameraButton = document.getElementById("cameraButton");
 const mirrorButton = document.getElementById("mirrorButton");
-const delayToggleButton = document.getElementById("delayToggleButton");
 const pauseButton = document.getElementById("pauseButton");
 const playBufferButton = document.getElementById("playBufferButton");
 const speedButton = document.getElementById("speedButton");
@@ -36,7 +35,6 @@ let stream = null;
 let facingMode = "environment";
 let mirrored = false;
 let fillMode = true;
-let delayEnabled = true;
 let delaySeconds = Number(delaySlider.value);
 let frames = [];
 let lastCapture = 0;
@@ -91,13 +89,11 @@ function updateLabels() {
     delaySlider.value = String(delaySeconds);
   }
 
-  delayLabel.textContent = delayEnabled ? `Delay ${delaySeconds} s` : "Delay off";
+  delayLabel.textContent = `Delay ${delaySeconds} s`;
   cameraLabel.textContent = `${facingMode === "user" ? "Front" : "Back"} 1080/60`;
   document.body.classList.toggle("cameraActive", Boolean(stream));
   document.body.classList.toggle("liveMirror", mirrored);
   mirrorButton.classList.toggle("active", mirrored);
-  setButtonLabel(delayToggleButton, delayEnabled ? "◷" : "●", delayEnabled ? "Delay" : "Live");
-  delayToggleButton.classList.toggle("active", delayEnabled);
   setButtonLabel(pauseButton, paused ? "●" : "Ⅱ", paused ? "Live" : "Pause");
   pauseButton.classList.toggle("active", paused);
   playBufferButton.disabled = !paused || frames.length < 2;
@@ -111,7 +107,6 @@ function updateLabels() {
   frameLabel.textContent = paused && pausedFrameIndex >= 0
     ? `Frame ${pausedFrameIndex + 1}/${frames.length}`
     : "Frame --";
-  delaySlider.disabled = !delayEnabled;
   fitButton.classList.toggle("active", fillMode);
   setButtonLabel(fitButton, fillMode ? "▣" : "▦", fillMode ? "Fit" : "Fill");
   fitButton.title = fillMode ? "Show full frame" : "Fill the screen";
@@ -465,7 +460,7 @@ function setPaused(nextPaused) {
   paused = nextPaused;
 
   if (paused) {
-    const currentFrameIndex = delayEnabled ? findDelayedFrameIndex(performance.now()) : frames.length - 1;
+    const currentFrameIndex = findDelayedFrameIndex(performance.now());
     pausedFrameIndex = currentFrameIndex >= 0 ? currentFrameIndex : lastDelayedFrameIndex;
 
     if (pausedFrameIndex >= 0 && frames[pausedFrameIndex]) {
@@ -566,11 +561,6 @@ async function renderLoop(now = performance.now()) {
     updateLabels();
   }
 
-  if (!delayEnabled) {
-    drawLiveFrame();
-    return;
-  }
-
   const targetTime = now - delaySeconds * 1000;
   let delayedFrame = null;
   let delayedFrameIndex = -1;
@@ -600,16 +590,6 @@ cameraButton.addEventListener("click", () => {
 
 mirrorButton.addEventListener("click", () => {
   mirrored = !mirrored;
-  updateLabels();
-});
-
-delayToggleButton.addEventListener("click", () => {
-  delayEnabled = !delayEnabled;
-  stopBufferPlayback();
-  if (paused) {
-    setPaused(false);
-    return;
-  }
   updateLabels();
 });
 
@@ -777,7 +757,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=32", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=33", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
