@@ -276,6 +276,12 @@ body.fill #delayCanvas {
   background: linear-gradient(180deg, #3f8dff, var(--blue));
 }
 
+#freeDrawButton.active {
+  color: var(--black-ring);
+  border-color: rgba(244, 236, 212, 0.92);
+  background: linear-gradient(180deg, #fff8df, var(--white-ring));
+}
+
 #colorButton {
   color: #171005;
   border-color: rgba(255, 255, 255, 0.34);

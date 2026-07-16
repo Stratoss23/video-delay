@@ -22,6 +22,7 @@ const cameraLabel = document.getElementById("cameraLabel");
 const bufferLabel = document.getElementById("bufferLabel");
 const drawButton = document.getElementById("drawButton");
 const drawModeButton = document.getElementById("drawModeButton");
+const freeDrawButton = document.getElementById("freeDrawButton");
 const colorButton = document.getElementById("colorButton");
 const undoDrawButton = document.getElementById("undoDrawButton");
 const clearDrawButton = document.getElementById("clearDrawButton");
@@ -102,10 +103,11 @@ function updateLabels() {
   fitButton.classList.toggle("active", fillMode);
   fitButton.textContent = fillMode ? "Fit" : "Fill";
   fitButton.title = fillMode ? "Zobrazit cely zaber" : "Vyplnit obraz";
-  drawButton.classList.toggle("active", drawMode && drawShapeMode === "free");
+  drawButton.classList.toggle("active", drawMode);
   drawCanvas.classList.toggle("enabled", drawMode);
   drawModeButton.textContent = "Line";
-  drawModeButton.classList.toggle("active", drawMode && drawShapeMode === "line");
+  drawModeButton.classList.toggle("active", drawShapeMode === "line");
+  freeDrawButton.classList.toggle("active", drawShapeMode === "free");
   colorButton.textContent = drawColors[drawColorIndex].label;
   colorButton.style.setProperty("--draw-color", drawColors[drawColorIndex].value);
   undoDrawButton.disabled = guideLines.length === 0;
@@ -231,14 +233,16 @@ function cycleDrawColor() {
   updateLabels();
 }
 
-function activateDrawTool(mode) {
-  if (drawMode && drawShapeMode === mode) {
-    drawMode = false;
-  } else {
-    drawMode = true;
-    drawShapeMode = mode;
-  }
+function toggleDrawEnabled() {
+  drawMode = !drawMode;
+  activeLine = null;
+  drawingPointerId = null;
+  redrawGuideLines();
+  updateLabels();
+}
 
+function selectDrawTool(mode) {
+  drawShapeMode = mode;
   activeLine = null;
   drawingPointerId = null;
   redrawGuideLines();
@@ -581,7 +585,7 @@ frameSlider.addEventListener("input", (event) => {
 });
 
 drawButton.addEventListener("click", () => {
-  activateDrawTool("free");
+  toggleDrawEnabled();
 });
 
 colorButton.addEventListener("click", () => {
@@ -589,7 +593,11 @@ colorButton.addEventListener("click", () => {
 });
 
 drawModeButton.addEventListener("click", () => {
-  activateDrawTool("line");
+  selectDrawTool("line");
+});
+
+freeDrawButton.addEventListener("click", () => {
+  selectDrawTool("free");
 });
 
 undoDrawButton.addEventListener("click", () => {
