@@ -89,7 +89,7 @@ function updateLabels() {
   }
 
   delayLabel.textContent = `Delay ${delaySeconds} s`;
-  cameraLabel.textContent = `${facingMode === "user" ? "Predna" : "Zadna"} 1080/60`;
+  cameraLabel.textContent = `${facingMode === "user" ? "Front" : "Back"} 1080/60`;
   mirrorButton.classList.toggle("active", mirrored);
   setButtonLabel(pauseButton, paused ? "●" : "Ⅱ", paused ? "Live" : "Pause");
   pauseButton.classList.toggle("active", paused);
@@ -106,7 +106,7 @@ function updateLabels() {
     : "Frame --";
   fitButton.classList.toggle("active", fillMode);
   setButtonLabel(fitButton, fillMode ? "▣" : "▦", fillMode ? "Fit" : "Fill");
-  fitButton.title = fillMode ? "Zobrazit cely zaber" : "Vyplnit obraz";
+  fitButton.title = fillMode ? "Show full frame" : "Fill the screen";
   drawButton.classList.toggle("active", drawMode);
   drawCanvas.classList.toggle("enabled", drawMode);
   setButtonLabel(drawButton, "✎", "Draw");
@@ -289,7 +289,7 @@ function stopStream() {
 
 async function startCamera() {
   stopStream();
-  setStatus("Otvaram kameru...");
+  setStatus("Opening camera...");
 
   const constraints = {
     audio: false,
@@ -315,7 +315,7 @@ async function startCamera() {
     }
   } catch (error) {
     console.error(error);
-    setStatus("Kamera sa nepodarila spustit. Skontroluj povolenie kamery v Safari.");
+    setStatus("Camera could not start. Check camera permission in Safari.");
     permissionPanel.classList.remove("hidden");
   }
 }

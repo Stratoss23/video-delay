@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="sk">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -8,52 +8,52 @@
     <meta name="apple-mobile-web-app-title" content="Video Delay">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Video Delay</title>
-    <link rel="manifest" href="./manifest.webmanifest?v=28">
-    <link rel="stylesheet" href="./style.css?v=28">
+    <link rel="manifest" href="./manifest.webmanifest?v=29">
+    <link rel="stylesheet" href="./style.css?v=29">
   </head>
   <body>
     <main class="app">
       <video id="sourceVideo" playsinline muted></video>
       <canvas id="delayCanvas"></canvas>
-      <canvas id="drawCanvas" aria-label="Kreslenie pomocnych ciar"></canvas>
-      <a class="liveLogoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Otvorit YouTube kanal Archery Love">
+      <canvas id="drawCanvas" aria-label="Guide line drawing"></canvas>
+      <a class="liveLogoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Open Archery Love YouTube channel">
         <img class="liveLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
       </a>
 
       <section id="permissionPanel" class="panel">
-        <a class="logoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Otvorit YouTube kanal Archery Love">
+        <a class="logoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Open Archery Love YouTube channel">
           <img class="startLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
         </a>
         <h1>Video Delay</h1>
-        <p>Oneskoreny obraz z kamery pre iPad.</p>
-        <button id="startButton" class="primary"><span class="buttonIcon">▶</span><span class="buttonText">Spustit kameru</span></button>
-        <p id="statusText" class="status">Safari sa opyta na povolenie kamery.</p>
+        <p>Delayed camera view for iPad training.</p>
+        <button id="startButton" class="primary"><span class="buttonIcon">▶</span><span class="buttonText">Start Camera</span></button>
+        <p id="statusText" class="status">Safari will ask for camera permission.</p>
       </section>
 
       <div class="topbar">
         <div class="brandGroup">
-          <a class="brandLogoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Otvorit YouTube kanal Archery Love">
+          <a class="brandLogoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Open Archery Love YouTube channel">
             <img class="brandLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
           </a>
-          <div class="badge" id="cameraLabel">Kamera</div>
+          <div class="badge" id="cameraLabel">Camera</div>
         </div>
-        <div class="drawTools" aria-label="Kreslenie">
-          <button id="drawButton" title="Zapnut alebo vypnut kreslenie"><span class="buttonIcon">✎</span><span class="buttonText">Draw</span></button>
-          <button id="drawModeButton" title="Kreslit rovnu ciaru"><span class="buttonIcon">╱</span><span class="buttonText">Line</span></button>
-          <button id="freeDrawButton" title="Volne kreslenie"><span class="buttonIcon">~</span><span class="buttonText">Free</span></button>
-          <button id="colorButton" title="Farba ciary"><span class="buttonIcon">🎨</span><span class="buttonText">Yellow</span></button>
-          <button id="undoDrawButton" title="Zrusit poslednu ciaru"><span class="buttonIcon">↶</span><span class="buttonText">Undo</span></button>
-          <button id="clearDrawButton" title="Vymazat ciary"><span class="buttonIcon">×</span><span class="buttonText">Clear</span></button>
+        <div class="drawTools" aria-label="Drawing tools">
+          <button id="drawButton" title="Turn drawing on or off"><span class="buttonIcon">✎</span><span class="buttonText">Draw</span></button>
+          <button id="drawModeButton" title="Draw a straight line"><span class="buttonIcon">╱</span><span class="buttonText">Line</span></button>
+          <button id="freeDrawButton" title="Freehand drawing"><span class="buttonIcon">~</span><span class="buttonText">Free</span></button>
+          <button id="colorButton" title="Line color"><span class="buttonIcon">🎨</span><span class="buttonText">Yellow</span></button>
+          <button id="undoDrawButton" title="Undo last drawing"><span class="buttonIcon">↶</span><span class="buttonText">Undo</span></button>
+          <button id="clearDrawButton" title="Clear drawings"><span class="buttonIcon">×</span><span class="buttonText">Clear</span></button>
         </div>
         <div class="badge" id="bufferLabel">Buffer 0 s</div>
       </div>
 
-      <section class="controls" aria-label="Ovladanie">
-        <button id="cameraButton" title="Prepnut kameru"><span class="buttonIcon">↺</span><span class="buttonText">Cam</span></button>
-        <button id="mirrorButton" title="Zrkadlenie"><span class="buttonIcon">⇄</span><span class="buttonText">Mir</span></button>
-        <button id="pauseButton" title="Pauza"><span class="buttonIcon">Ⅱ</span><span class="buttonText">Pause</span></button>
-        <button id="playBufferButton" title="Prehrat od frame"><span class="buttonIcon">▶</span><span class="buttonText">Play</span></button>
-        <button id="speedButton" title="Rychlost prehravania"><span class="buttonIcon">×</span><span class="buttonText">1</span></button>
+      <section class="controls" aria-label="Controls">
+        <button id="cameraButton" title="Switch camera"><span class="buttonIcon">↺</span><span class="buttonText">Cam</span></button>
+        <button id="mirrorButton" title="Mirror image"><span class="buttonIcon">⇄</span><span class="buttonText">Mir</span></button>
+        <button id="pauseButton" title="Pause"><span class="buttonIcon">Ⅱ</span><span class="buttonText">Pause</span></button>
+        <button id="playBufferButton" title="Play from selected frame"><span class="buttonIcon">▶</span><span class="buttonText">Play</span></button>
+        <button id="speedButton" title="Playback speed"><span class="buttonIcon">×</span><span class="buttonText">1</span></button>
 
         <label class="frameControl">
           <span id="frameLabel">Frame --</span>
@@ -65,11 +65,11 @@
           <input id="delaySlider" type="range" min="0" max="5" step="1" value="3">
         </label>
 
-        <button id="fitButton" title="Vyplnit obraz"><span class="buttonIcon">▣</span><span class="buttonText">Fit</span></button>
-        <button id="fullscreenButton" title="Cela obrazovka"><span class="buttonIcon">⛶</span><span class="buttonText">Full</span></button>
+        <button id="fitButton" title="Fill view"><span class="buttonIcon">▣</span><span class="buttonText">Fit</span></button>
+        <button id="fullscreenButton" title="Fullscreen"><span class="buttonIcon">⛶</span><span class="buttonText">Full</span></button>
       </section>
     </main>
 
-    <script src="./app.js?v=28"></script>
+    <script src="./app.js?v=29"></script>
   </body>
 </html>
