@@ -58,8 +58,8 @@ const CAMERA_WIDTH = 1920;
 const CAMERA_HEIGHT = 1080;
 const CAMERA_FPS = 60;
 const MAX_DELAY_SECONDS = 10;
-const SCRUB_HISTORY_SECONDS = 8;
-const SCRUB_FUTURE_SECONDS = 8;
+const SCRUB_HISTORY_SECONDS = 10;
+const SCRUB_FUTURE_SECONDS = 5;
 
 const playbackSpeeds = [
   { label: "1", multiplier: 1 },
@@ -855,7 +855,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=36", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=37", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
