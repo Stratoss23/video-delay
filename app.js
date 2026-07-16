@@ -41,6 +41,7 @@ let lastCapture = 0;
 let animationFrame = 0;
 let paused = false;
 let pausedFrameIndex = -1;
+let pausedFrameAnchorIndex = -1;
 let pausedFrameMaxIndex = -1;
 let lastDelayedFrameIndex = -1;
 let bufferPlaying = false;
@@ -58,6 +59,7 @@ const CAMERA_HEIGHT = 1080;
 const CAMERA_FPS = 60;
 const MAX_DELAY_SECONDS = 10;
 const SCRUB_HISTORY_SECONDS = 8;
+const SCRUB_FUTURE_SECONDS = 8;
 
 const playbackSpeeds = [
   { label: "1", multiplier: 1 },
@@ -88,6 +90,8 @@ function applyFillMode() {
 }
 
 function updateLabels() {
+  updatePausedScrubWindow();
+
   delaySlider.max = String(MAX_DELAY_SECONDS);
   if (delaySeconds > MAX_DELAY_SECONDS) {
     delaySeconds = MAX_DELAY_SECONDS;
@@ -107,9 +111,13 @@ function updateLabels() {
   setButtonLabel(speedButton, "×", playbackSpeeds[playbackSpeedIndex].label);
   speedButton.disabled = !paused;
   frameSlider.disabled = !paused || frames.length < 2;
+  const frameMin = paused && pausedFrameAnchorIndex >= 0
+    ? findFrameIndexAtOrAfter(frames[pausedFrameAnchorIndex].time - SCRUB_HISTORY_SECONDS * 1000)
+    : 0;
   const frameMax = paused && pausedFrameMaxIndex >= 0
     ? pausedFrameMaxIndex
     : Math.max(0, frames.length - 1);
+  frameSlider.min = String(frameMin);
   frameSlider.max = String(frameMax);
   frameSlider.value = String(pausedFrameIndex >= 0 ? pausedFrameIndex : 0);
   frameLabel.textContent = paused && pausedFrameIndex >= 0
@@ -162,6 +170,7 @@ function clearFrameBuffer() {
   frames = [];
   paused = false;
   pausedFrameIndex = -1;
+  pausedFrameAnchorIndex = -1;
   pausedFrameMaxIndex = -1;
   lastDelayedFrameIndex = -1;
   lastCapture = 0;
@@ -288,6 +297,7 @@ function stopStream() {
   animationFrame = 0;
   paused = false;
   pausedFrameIndex = -1;
+  pausedFrameAnchorIndex = -1;
   pausedFrameMaxIndex = -1;
   lastDelayedFrameIndex = -1;
 
@@ -342,6 +352,7 @@ async function switchCamera() {
   stopBufferPlayback();
   paused = false;
   pausedFrameIndex = -1;
+  pausedFrameAnchorIndex = -1;
   pausedFrameMaxIndex = -1;
   lastDelayedFrameIndex = -1;
   facingMode = facingMode === "user" ? "environment" : "user";
@@ -437,13 +448,24 @@ function drawLiveFrame() {
 }
 
 function trimFrames(now) {
-  const keepAfter = now - Math.max(delaySeconds + SCRUB_HISTORY_SECONDS + 1, SCRUB_HISTORY_SECONDS + 2) * 1000;
+  const liveKeepAfter = now - Math.max(delaySeconds + SCRUB_HISTORY_SECONDS + SCRUB_FUTURE_SECONDS + 1, SCRUB_HISTORY_SECONDS + 2) * 1000;
+  const pausedAnchor = pausedFrameAnchorIndex >= 0 ? frames[pausedFrameAnchorIndex] : null;
+  const pausedKeepAfter = pausedAnchor
+    ? pausedAnchor.time - SCRUB_HISTORY_SECONDS * 1000
+    : liveKeepAfter;
+  const keepAfter = paused ? Math.min(liveKeepAfter, pausedKeepAfter) : liveKeepAfter;
 
   while (frames.length && frames[0].time < keepAfter) {
     const oldFrame = frames.shift();
     oldFrame.bitmap?.close?.();
-    if (!paused && pausedFrameIndex >= 0) {
+    if (pausedFrameIndex >= 0) {
       pausedFrameIndex -= 1;
+    }
+    if (pausedFrameAnchorIndex >= 0) {
+      pausedFrameAnchorIndex -= 1;
+    }
+    if (pausedFrameMaxIndex >= 0) {
+      pausedFrameMaxIndex -= 1;
     }
     if (lastDelayedFrameIndex >= 0) {
       lastDelayedFrameIndex -= 1;
@@ -452,6 +474,50 @@ function trimFrames(now) {
   if (lastDelayedFrameIndex < -1) {
     lastDelayedFrameIndex = -1;
   }
+  if (pausedFrameAnchorIndex < -1) {
+    pausedFrameAnchorIndex = -1;
+  }
+  if (pausedFrameMaxIndex < -1) {
+    pausedFrameMaxIndex = -1;
+  }
+}
+
+function findFrameIndexAtOrAfter(time) {
+  for (let i = 0; i < frames.length; i += 1) {
+    if (frames[i].time >= time) {
+      return i;
+    }
+  }
+
+  return frames.length ? frames.length - 1 : 0;
+}
+
+function findFrameIndexAtOrBefore(time) {
+  for (let i = frames.length - 1; i >= 0; i -= 1) {
+    if (frames[i].time <= time) {
+      return i;
+    }
+  }
+
+  return 0;
+}
+
+function updatePausedScrubWindow() {
+  if (!paused || pausedFrameAnchorIndex < 0 || !frames[pausedFrameAnchorIndex]) {
+    return;
+  }
+
+  const futureLimit = frames[pausedFrameAnchorIndex].time + SCRUB_FUTURE_SECONDS * 1000;
+  pausedFrameMaxIndex = findFrameIndexAtOrBefore(futureLimit);
+}
+
+function needsPausedFutureCapture() {
+  if (!paused || pausedFrameAnchorIndex < 0 || !frames[pausedFrameAnchorIndex]) {
+    return false;
+  }
+
+  const newest = frames.at(-1);
+  return !newest || newest.time < frames[pausedFrameAnchorIndex].time + SCRUB_FUTURE_SECONDS * 1000;
 }
 
 function findDelayedFrameIndex(now) {
@@ -473,13 +539,16 @@ function setPaused(nextPaused) {
   if (paused) {
     const currentFrameIndex = findDelayedFrameIndex(performance.now());
     pausedFrameIndex = currentFrameIndex >= 0 ? currentFrameIndex : lastDelayedFrameIndex;
+    pausedFrameAnchorIndex = pausedFrameIndex;
     pausedFrameMaxIndex = pausedFrameIndex;
+    updatePausedScrubWindow();
 
     if (pausedFrameIndex >= 0 && frames[pausedFrameIndex]) {
       drawDelayedFrame(frames[pausedFrameIndex]);
     }
   } else {
     pausedFrameIndex = -1;
+    pausedFrameAnchorIndex = -1;
     pausedFrameMaxIndex = -1;
   }
 
@@ -506,7 +575,7 @@ function playBufferFromCurrentFrame() {
   }
 
   if (pausedFrameIndex < 0) {
-    pausedFrameIndex = 0;
+    pausedFrameIndex = pausedFrameAnchorIndex >= 0 ? pausedFrameAnchorIndex : 0;
   }
 
   bufferPlaying = true;
@@ -525,6 +594,11 @@ function playBufferFromCurrentFrame() {
     const playbackEndIndex = pausedFrameMaxIndex >= 0 ? pausedFrameMaxIndex : frames.length - 1;
 
     if (pausedFrameIndex >= playbackEndIndex) {
+      if (needsPausedFutureCapture()) {
+        bufferPlayTimer = setTimeout(playNext, 120);
+        return;
+      }
+
       stopBufferPlayback();
       updateLabels();
       return;
@@ -552,9 +626,12 @@ function scrubFrame(index) {
   const frameMax = pausedFrameMaxIndex >= 0
     ? pausedFrameMaxIndex
     : frames.length - 1;
+  const frameMin = pausedFrameAnchorIndex >= 0
+    ? findFrameIndexAtOrAfter(frames[pausedFrameAnchorIndex].time - SCRUB_HISTORY_SECONDS * 1000)
+    : 0;
   pausedFrameIndex = Math.min(
     frameMax,
-    Math.max(0, index)
+    Math.max(frameMin, index)
   );
 
   drawDelayedFrame(frames[pausedFrameIndex]);
@@ -568,15 +645,18 @@ async function renderLoop(now = performance.now()) {
     return;
   }
 
-  if (paused) {
-    return;
+  if (now - lastCapture >= 1000 / CAMERA_FPS) {
+    const shouldCapture = !paused || needsPausedFutureCapture();
+    if (shouldCapture) {
+      lastCapture = now;
+      await captureFrame(now);
+      trimFrames(now);
+      updateLabels();
+    }
   }
 
-  if (now - lastCapture >= 1000 / CAMERA_FPS) {
-    lastCapture = now;
-    await captureFrame(now);
-    trimFrames(now);
-    updateLabels();
+  if (paused) {
+    return;
   }
 
   const targetTime = now - delaySeconds * 1000;
@@ -775,7 +855,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=35", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=36", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
