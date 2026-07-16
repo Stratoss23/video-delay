@@ -107,6 +107,15 @@ body.fill #delayCanvas {
   display: none;
 }
 
+.startLogo {
+  display: block;
+  width: min(150px, 42vw);
+  max-height: 118px;
+  object-fit: contain;
+  margin: 0 auto 18px;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.42));
+}
+
 .panel h1 {
   margin: 0 0 10px;
   font-size: clamp(32px, 7vw, 54px);
@@ -160,6 +169,28 @@ body.fill #delayCanvas {
   color: var(--text);
   font-size: 14px;
   font-weight: 650;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  pointer-events: none;
+}
+
+.brandLogo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    var(--panel);
   backdrop-filter: blur(18px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
 }
@@ -362,6 +393,15 @@ input[type="range"]::-webkit-slider-thumb {
   .topbar {
     align-items: stretch;
     flex-wrap: wrap;
+  }
+
+  .brandGroup {
+    flex: 1 1 auto;
+  }
+
+  .brandLogo {
+    width: 42px;
+    height: 42px;
   }
 
   .drawTools {
