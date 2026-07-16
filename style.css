@@ -241,6 +241,18 @@ body.fill #delayCanvas {
   background: linear-gradient(180deg, #ffe879, var(--gold));
 }
 
+#drawButton.active {
+  color: #fff8f0;
+  border-color: rgba(255, 117, 117, 0.72);
+  background: linear-gradient(180deg, #ff6666, var(--red));
+}
+
+#drawModeButton.active {
+  color: #f9fbff;
+  border-color: rgba(105, 164, 255, 0.72);
+  background: linear-gradient(180deg, #3f8dff, var(--blue));
+}
+
 #colorButton {
   color: #171005;
   border-color: rgba(255, 255, 255, 0.34);
