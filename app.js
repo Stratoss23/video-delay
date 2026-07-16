@@ -102,10 +102,10 @@ function updateLabels() {
   fitButton.classList.toggle("active", fillMode);
   fitButton.textContent = fillMode ? "Fit" : "Fill";
   fitButton.title = fillMode ? "Zobrazit cely zaber" : "Vyplnit obraz";
-  drawButton.classList.toggle("active", drawMode);
+  drawButton.classList.toggle("active", drawMode && drawShapeMode === "free");
   drawCanvas.classList.toggle("enabled", drawMode);
-  drawModeButton.textContent = drawShapeMode === "line" ? "Line" : "Free";
-  drawModeButton.classList.toggle("active", drawShapeMode === "free");
+  drawModeButton.textContent = "Line";
+  drawModeButton.classList.toggle("active", drawMode && drawShapeMode === "line");
   colorButton.textContent = drawColors[drawColorIndex].label;
   colorButton.style.setProperty("--draw-color", drawColors[drawColorIndex].value);
   undoDrawButton.disabled = guideLines.length === 0;
@@ -231,8 +231,14 @@ function cycleDrawColor() {
   updateLabels();
 }
 
-function toggleDrawShapeMode() {
-  drawShapeMode = drawShapeMode === "line" ? "free" : "line";
+function activateDrawTool(mode) {
+  if (drawMode && drawShapeMode === mode) {
+    drawMode = false;
+  } else {
+    drawMode = true;
+    drawShapeMode = mode;
+  }
+
   activeLine = null;
   drawingPointerId = null;
   redrawGuideLines();
@@ -575,7 +581,7 @@ frameSlider.addEventListener("input", (event) => {
 });
 
 drawButton.addEventListener("click", () => {
-  setDrawMode(!drawMode);
+  activateDrawTool("free");
 });
 
 colorButton.addEventListener("click", () => {
@@ -583,7 +589,7 @@ colorButton.addEventListener("click", () => {
 });
 
 drawModeButton.addEventListener("click", () => {
-  toggleDrawShapeMode();
+  activateDrawTool("line");
 });
 
 undoDrawButton.addEventListener("click", () => {
