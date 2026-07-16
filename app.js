@@ -41,6 +41,7 @@ let lastCapture = 0;
 let animationFrame = 0;
 let paused = false;
 let pausedFrameIndex = -1;
+let pausedFrameMaxIndex = -1;
 let lastDelayedFrameIndex = -1;
 let bufferPlaying = false;
 let bufferPlayTimer = 0;
@@ -56,6 +57,7 @@ const CAMERA_WIDTH = 1920;
 const CAMERA_HEIGHT = 1080;
 const CAMERA_FPS = 60;
 const MAX_DELAY_SECONDS = 10;
+const SCRUB_HISTORY_SECONDS = 8;
 
 const playbackSpeeds = [
   { label: "1", multiplier: 1 },
@@ -105,10 +107,13 @@ function updateLabels() {
   setButtonLabel(speedButton, "×", playbackSpeeds[playbackSpeedIndex].label);
   speedButton.disabled = !paused;
   frameSlider.disabled = !paused || frames.length < 2;
-  frameSlider.max = String(Math.max(0, frames.length - 1));
+  const frameMax = paused && pausedFrameMaxIndex >= 0
+    ? pausedFrameMaxIndex
+    : Math.max(0, frames.length - 1);
+  frameSlider.max = String(frameMax);
   frameSlider.value = String(pausedFrameIndex >= 0 ? pausedFrameIndex : 0);
   frameLabel.textContent = paused && pausedFrameIndex >= 0
-    ? `Frame ${pausedFrameIndex + 1}/${frames.length}`
+    ? `Frame ${pausedFrameIndex + 1}/${frameMax + 1}`
     : "Frame --";
   fitButton.classList.toggle("active", fillMode);
   setButtonLabel(fitButton, fillMode ? "▣" : "▦", fillMode ? "Fit" : "Fill");
@@ -157,6 +162,7 @@ function clearFrameBuffer() {
   frames = [];
   paused = false;
   pausedFrameIndex = -1;
+  pausedFrameMaxIndex = -1;
   lastDelayedFrameIndex = -1;
   lastCapture = 0;
   updateLabels();
@@ -282,6 +288,7 @@ function stopStream() {
   animationFrame = 0;
   paused = false;
   pausedFrameIndex = -1;
+  pausedFrameMaxIndex = -1;
   lastDelayedFrameIndex = -1;
 
   if (stream) {
@@ -335,6 +342,7 @@ async function switchCamera() {
   stopBufferPlayback();
   paused = false;
   pausedFrameIndex = -1;
+  pausedFrameMaxIndex = -1;
   lastDelayedFrameIndex = -1;
   facingMode = facingMode === "user" ? "environment" : "user";
   updateLabels();
@@ -429,7 +437,7 @@ function drawLiveFrame() {
 }
 
 function trimFrames(now) {
-  const keepAfter = now - Math.max(delaySeconds + 2, 4) * 1000;
+  const keepAfter = now - Math.max(delaySeconds + SCRUB_HISTORY_SECONDS + 1, SCRUB_HISTORY_SECONDS + 2) * 1000;
 
   while (frames.length && frames[0].time < keepAfter) {
     const oldFrame = frames.shift();
@@ -465,12 +473,14 @@ function setPaused(nextPaused) {
   if (paused) {
     const currentFrameIndex = findDelayedFrameIndex(performance.now());
     pausedFrameIndex = currentFrameIndex >= 0 ? currentFrameIndex : lastDelayedFrameIndex;
+    pausedFrameMaxIndex = pausedFrameIndex;
 
     if (pausedFrameIndex >= 0 && frames[pausedFrameIndex]) {
       drawDelayedFrame(frames[pausedFrameIndex]);
     }
   } else {
     pausedFrameIndex = -1;
+    pausedFrameMaxIndex = -1;
   }
 
   updateLabels();
@@ -512,7 +522,9 @@ function playBufferFromCurrentFrame() {
     drawDelayedFrame(frames[pausedFrameIndex]);
     updateLabels();
 
-    if (pausedFrameIndex >= frames.length - 1) {
+    const playbackEndIndex = pausedFrameMaxIndex >= 0 ? pausedFrameMaxIndex : frames.length - 1;
+
+    if (pausedFrameIndex >= playbackEndIndex) {
       stopBufferPlayback();
       updateLabels();
       return;
@@ -537,8 +549,11 @@ function scrubFrame(index) {
   }
 
   stopBufferPlayback();
+  const frameMax = pausedFrameMaxIndex >= 0
+    ? pausedFrameMaxIndex
+    : frames.length - 1;
   pausedFrameIndex = Math.min(
-    frames.length - 1,
+    frameMax,
     Math.max(0, index)
   );
 
@@ -760,7 +775,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=34", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=35", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
