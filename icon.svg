@@ -1,7 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#05070a"/>
-  <circle cx="256" cy="256" r="150" fill="none" stroke="#35c7a0" stroke-width="36"/>
-  <path d="M256 126a130 130 0 1 1-92 38" fill="none" stroke="#f4f7fb" stroke-width="26" stroke-linecap="round"/>
-  <path d="M148 126v72h72" fill="none" stroke="#f4f7fb" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M256 178v88l62 38" fill="none" stroke="#35c7a0" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.36"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#07080b"/>
+  <circle cx="256" cy="256" r="186" fill="#f4ecd4" filter="url(#shadow)"/>
+  <circle cx="256" cy="256" r="150" fill="#101116"/>
+  <circle cx="256" cy="256" r="116" fill="#246fe6"/>
+  <circle cx="256" cy="256" r="78" fill="#e33d3d"/>
+  <circle cx="256" cy="256" r="42" fill="#ffd447"/>
+  <circle cx="256" cy="256" r="12" fill="#101116"/>
+  <path d="M256 112a144 144 0 1 1-102 42" fill="none" stroke="#fbf7ea" stroke-width="18" stroke-linecap="round"/>
+  <path d="M150 112v58h58" fill="none" stroke="#fbf7ea" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 192v64l45 28" fill="none" stroke="#101116" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "video-delay-v17";
+const CACHE_NAME = "video-delay-v18";
 const FILES = [
   "./",
   "./index.html",
