@@ -8,8 +8,8 @@
     <meta name="apple-mobile-web-app-title" content="Video Delay">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Video Delay</title>
-    <link rel="manifest" href="./manifest.webmanifest?v=21">
-    <link rel="stylesheet" href="./style.css?v=21">
+    <link rel="manifest" href="./manifest.webmanifest?v=22">
+    <link rel="stylesheet" href="./style.css?v=22">
   </head>
   <body>
     <main class="app">
@@ -18,7 +18,9 @@
       <canvas id="drawCanvas" aria-label="Kreslenie pomocnych ciar"></canvas>
 
       <section id="permissionPanel" class="panel">
-        <img class="startLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
+        <a class="logoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Otvorit YouTube kanal Archery Love">
+          <img class="startLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
+        </a>
         <h1>Video Delay</h1>
         <p>Oneskoreny obraz z kamery pre iPad.</p>
         <button id="startButton" class="primary">Spustit kameru</button>
@@ -27,7 +29,9 @@
 
       <div class="topbar">
         <div class="brandGroup">
-          <img class="brandLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
+          <a class="brandLogoLink" href="https://www.youtube.com/@archerylove" target="_blank" rel="noopener noreferrer" aria-label="Otvorit YouTube kanal Archery Love">
+            <img class="brandLogo" src="https://www.lukostrelbatopolcany.sk/wp-content/uploads/2025/11/logo_love_transparent.png" alt="Lukostrelba Topolcany">
+          </a>
           <div class="badge" id="cameraLabel">Kamera</div>
         </div>
         <div class="drawTools" aria-label="Kreslenie">
@@ -62,6 +66,6 @@
       </section>
     </main>
 
-    <script src="./app.js?v=21"></script>
+    <script src="./app.js?v=22"></script>
   </body>
 </html>
