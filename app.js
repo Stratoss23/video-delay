@@ -54,7 +54,7 @@ let guideLines = [];
 const CAMERA_WIDTH = 1920;
 const CAMERA_HEIGHT = 1080;
 const CAMERA_FPS = 60;
-const MAX_DELAY_SECONDS = 5;
+const MAX_DELAY_SECONDS = 10;
 
 const playbackSpeeds = [
   { label: "1", multiplier: 1 },
