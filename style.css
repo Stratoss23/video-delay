@@ -73,6 +73,21 @@ body.fill #delayCanvas {
   object-fit: cover;
 }
 
+#drawCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  touch-action: none;
+  z-index: 2;
+}
+
+#drawCanvas.enabled {
+  pointer-events: auto;
+  cursor: crosshair;
+}
+
 .panel {
   position: absolute;
   width: min(520px, calc(100vw - 32px));
@@ -127,9 +142,10 @@ body.fill #delayCanvas {
   left: max(14px, env(safe-area-inset-left));
   right: max(14px, env(safe-area-inset-right));
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
 }
 
@@ -146,6 +162,56 @@ body.fill #delayCanvas {
   font-weight: 650;
   backdrop-filter: blur(18px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.drawTools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: min(520px, calc(100vw - 220px));
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025)),
+    var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  pointer-events: auto;
+}
+
+.drawTools button {
+  min-width: 68px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.09);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drawTools button.active {
+  color: #171005;
+  border-color: rgba(255, 232, 122, 0.65);
+  background: linear-gradient(180deg, #ffe879, var(--gold));
+}
+
+#colorButton {
+  color: #171005;
+  border-color: rgba(255, 255, 255, 0.34);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.08)),
+    var(--draw-color, var(--gold));
+}
+
+.drawTools button:disabled {
+  opacity: 0.42;
 }
 
 .controls {
@@ -293,6 +359,21 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @media (max-width: 700px) and (orientation: portrait) {
+  .topbar {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .drawTools {
+    order: 3;
+    width: 100%;
+    max-width: none;
+  }
+
+  .drawTools button {
+    flex: 1 1 68px;
+  }
+
   .controls {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;

@@ -1,6 +1,8 @@
 const sourceVideo = document.getElementById("sourceVideo");
 const delayCanvas = document.getElementById("delayCanvas");
 const ctx = delayCanvas.getContext("2d", { alpha: false });
+const drawCanvas = document.getElementById("drawCanvas");
+const drawCtx = drawCanvas.getContext("2d");
 
 const permissionPanel = document.getElementById("permissionPanel");
 const startButton = document.getElementById("startButton");
@@ -18,6 +20,10 @@ const delaySlider = document.getElementById("delaySlider");
 const delayLabel = document.getElementById("delayLabel");
 const cameraLabel = document.getElementById("cameraLabel");
 const bufferLabel = document.getElementById("bufferLabel");
+const drawButton = document.getElementById("drawButton");
+const colorButton = document.getElementById("colorButton");
+const undoDrawButton = document.getElementById("undoDrawButton");
+const clearDrawButton = document.getElementById("clearDrawButton");
 
 const captureCanvas = document.createElement("canvas");
 const captureCtx = captureCanvas.getContext("2d", { alpha: false });
@@ -36,6 +42,11 @@ let lastDelayedFrameIndex = -1;
 let bufferPlaying = false;
 let bufferPlayTimer = 0;
 let playbackSpeedIndex = 0;
+let drawMode = false;
+let activeLine = null;
+let drawingPointerId = null;
+let drawColorIndex = 0;
+let guideLines = [];
 
 const CAMERA_WIDTH = 1920;
 const CAMERA_HEIGHT = 1080;
@@ -46,6 +57,13 @@ const playbackSpeeds = [
   { label: "1x", multiplier: 1 },
   { label: "0.5x", multiplier: 0.5 },
   { label: "0.25x", multiplier: 0.25 }
+];
+
+const drawColors = [
+  { label: "Yellow", value: "#ffd447" },
+  { label: "Red", value: "#e33d3d" },
+  { label: "Blue", value: "#246fe6" },
+  { label: "White", value: "#f4ecd4" }
 ];
 
 function setStatus(message) {
@@ -82,6 +100,12 @@ function updateLabels() {
   fitButton.classList.toggle("active", fillMode);
   fitButton.textContent = fillMode ? "Fit" : "Fill";
   fitButton.title = fillMode ? "Zobrazit cely zaber" : "Vyplnit obraz";
+  drawButton.classList.toggle("active", drawMode);
+  drawCanvas.classList.toggle("enabled", drawMode);
+  colorButton.textContent = drawColors[drawColorIndex].label;
+  colorButton.style.setProperty("--draw-color", drawColors[drawColorIndex].value);
+  undoDrawButton.disabled = guideLines.length === 0;
+  clearDrawButton.disabled = guideLines.length === 0;
 
   const newest = frames.at(-1);
   const oldest = frames[0];
@@ -127,6 +151,79 @@ function resizeCanvas() {
     delayCanvas.width = width;
     delayCanvas.height = height;
   }
+
+  if (drawCanvas.width !== width || drawCanvas.height !== height) {
+    drawCanvas.width = width;
+    drawCanvas.height = height;
+    redrawGuideLines();
+  }
+}
+
+function pointFromEvent(event) {
+  const rect = drawCanvas.getBoundingClientRect();
+  return {
+    x: (event.clientX - rect.left) / rect.width,
+    y: (event.clientY - rect.top) / rect.height
+  };
+}
+
+function drawGuideLine(line, preview = false) {
+  const width = drawCanvas.width;
+  const height = drawCanvas.height;
+  const lineWidth = Math.max(4, Math.round(Math.min(width, height) * 0.006));
+
+  drawCtx.save();
+  drawCtx.lineCap = "round";
+  drawCtx.lineJoin = "round";
+  drawCtx.lineWidth = lineWidth + 5;
+  drawCtx.strokeStyle = "rgba(0, 0, 0, 0.62)";
+  drawCtx.beginPath();
+  drawCtx.moveTo(line.x1 * width, line.y1 * height);
+  drawCtx.lineTo(line.x2 * width, line.y2 * height);
+  drawCtx.stroke();
+
+  drawCtx.lineWidth = preview ? lineWidth + 2 : lineWidth;
+  drawCtx.strokeStyle = line.color;
+  drawCtx.beginPath();
+  drawCtx.moveTo(line.x1 * width, line.y1 * height);
+  drawCtx.lineTo(line.x2 * width, line.y2 * height);
+  drawCtx.stroke();
+  drawCtx.restore();
+}
+
+function redrawGuideLines() {
+  drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+  guideLines.forEach((line) => drawGuideLine(line));
+
+  if (activeLine) {
+    drawGuideLine(activeLine, true);
+  }
+}
+
+function setDrawMode(enabled) {
+  drawMode = enabled;
+  activeLine = null;
+  drawingPointerId = null;
+  redrawGuideLines();
+  updateLabels();
+}
+
+function cycleDrawColor() {
+  drawColorIndex = (drawColorIndex + 1) % drawColors.length;
+  updateLabels();
+}
+
+function undoGuideLine() {
+  guideLines.pop();
+  redrawGuideLines();
+  updateLabels();
+}
+
+function clearGuideLines() {
+  guideLines = [];
+  activeLine = null;
+  redrawGuideLines();
+  updateLabels();
 }
 
 function stopStream() {
@@ -449,6 +546,81 @@ speedButton.addEventListener("click", () => {
 
 frameSlider.addEventListener("input", (event) => {
   scrubFrame(Number(event.target.value));
+});
+
+drawButton.addEventListener("click", () => {
+  setDrawMode(!drawMode);
+});
+
+colorButton.addEventListener("click", () => {
+  cycleDrawColor();
+});
+
+undoDrawButton.addEventListener("click", () => {
+  undoGuideLine();
+});
+
+clearDrawButton.addEventListener("click", () => {
+  clearGuideLines();
+});
+
+drawCanvas.addEventListener("pointerdown", (event) => {
+  if (!drawMode) {
+    return;
+  }
+
+  event.preventDefault();
+  drawCanvas.setPointerCapture(event.pointerId);
+  drawingPointerId = event.pointerId;
+  const point = pointFromEvent(event);
+  activeLine = {
+    x1: point.x,
+    y1: point.y,
+    x2: point.x,
+    y2: point.y,
+    color: drawColors[drawColorIndex].value
+  };
+  redrawGuideLines();
+});
+
+drawCanvas.addEventListener("pointermove", (event) => {
+  if (!drawMode || drawingPointerId !== event.pointerId || !activeLine) {
+    return;
+  }
+
+  event.preventDefault();
+  const point = pointFromEvent(event);
+  activeLine.x2 = point.x;
+  activeLine.y2 = point.y;
+  redrawGuideLines();
+});
+
+drawCanvas.addEventListener("pointerup", (event) => {
+  if (!drawMode || drawingPointerId !== event.pointerId || !activeLine) {
+    return;
+  }
+
+  event.preventDefault();
+  const point = pointFromEvent(event);
+  activeLine.x2 = point.x;
+  activeLine.y2 = point.y;
+
+  const dx = activeLine.x2 - activeLine.x1;
+  const dy = activeLine.y2 - activeLine.y1;
+  if (Math.hypot(dx, dy) > 0.01) {
+    guideLines.push(activeLine);
+  }
+
+  activeLine = null;
+  drawingPointerId = null;
+  redrawGuideLines();
+  updateLabels();
+});
+
+drawCanvas.addEventListener("pointercancel", () => {
+  activeLine = null;
+  drawingPointerId = null;
+  redrawGuideLines();
 });
 
 fitButton.addEventListener("click", () => {
