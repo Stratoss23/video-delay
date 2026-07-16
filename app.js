@@ -60,7 +60,10 @@ const MAX_DELAY_SECONDS = 10;
 const playbackSpeeds = [
   { label: "1", multiplier: 1 },
   { label: "0.5", multiplier: 0.5 },
-  { label: "0.25", multiplier: 0.25 }
+  { label: "0.25", multiplier: 0.25 },
+  { label: "0.1", multiplier: 0.1 },
+  { label: "0.05", multiplier: 0.05 },
+  { label: "0.02", multiplier: 0.02 }
 ];
 
 const drawColors = [
@@ -757,7 +760,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=33", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=34", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
