@@ -21,6 +21,7 @@ const delayLabel = document.getElementById("delayLabel");
 const cameraLabel = document.getElementById("cameraLabel");
 const bufferLabel = document.getElementById("bufferLabel");
 const drawButton = document.getElementById("drawButton");
+const drawModeButton = document.getElementById("drawModeButton");
 const colorButton = document.getElementById("colorButton");
 const undoDrawButton = document.getElementById("undoDrawButton");
 const clearDrawButton = document.getElementById("clearDrawButton");
@@ -46,6 +47,7 @@ let drawMode = false;
 let activeLine = null;
 let drawingPointerId = null;
 let drawColorIndex = 0;
+let drawShapeMode = "line";
 let guideLines = [];
 
 const CAMERA_WIDTH = 1920;
@@ -102,6 +104,8 @@ function updateLabels() {
   fitButton.title = fillMode ? "Zobrazit cely zaber" : "Vyplnit obraz";
   drawButton.classList.toggle("active", drawMode);
   drawCanvas.classList.toggle("enabled", drawMode);
+  drawModeButton.textContent = drawShapeMode === "line" ? "Line" : "Free";
+  drawModeButton.classList.toggle("active", drawShapeMode === "free");
   colorButton.textContent = drawColors[drawColorIndex].label;
   colorButton.style.setProperty("--draw-color", drawColors[drawColorIndex].value);
   undoDrawButton.disabled = guideLines.length === 0;
@@ -167,10 +171,20 @@ function pointFromEvent(event) {
   };
 }
 
-function drawGuideLine(line, preview = false) {
+function drawGuideItem(item, preview = false) {
   const width = drawCanvas.width;
   const height = drawCanvas.height;
   const lineWidth = Math.max(4, Math.round(Math.min(width, height) * 0.006));
+  const points = item.type === "free"
+    ? item.points
+    : [
+        { x: item.x1, y: item.y1 },
+        { x: item.x2, y: item.y2 }
+      ];
+
+  if (!points || points.length < 2) {
+    return;
+  }
 
   drawCtx.save();
   drawCtx.lineCap = "round";
@@ -178,25 +192,29 @@ function drawGuideLine(line, preview = false) {
   drawCtx.lineWidth = lineWidth + 5;
   drawCtx.strokeStyle = "rgba(0, 0, 0, 0.62)";
   drawCtx.beginPath();
-  drawCtx.moveTo(line.x1 * width, line.y1 * height);
-  drawCtx.lineTo(line.x2 * width, line.y2 * height);
+  drawCtx.moveTo(points[0].x * width, points[0].y * height);
+  points.slice(1).forEach((point) => {
+    drawCtx.lineTo(point.x * width, point.y * height);
+  });
   drawCtx.stroke();
 
   drawCtx.lineWidth = preview ? lineWidth + 2 : lineWidth;
-  drawCtx.strokeStyle = line.color;
+  drawCtx.strokeStyle = item.color;
   drawCtx.beginPath();
-  drawCtx.moveTo(line.x1 * width, line.y1 * height);
-  drawCtx.lineTo(line.x2 * width, line.y2 * height);
+  drawCtx.moveTo(points[0].x * width, points[0].y * height);
+  points.slice(1).forEach((point) => {
+    drawCtx.lineTo(point.x * width, point.y * height);
+  });
   drawCtx.stroke();
   drawCtx.restore();
 }
 
 function redrawGuideLines() {
   drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-  guideLines.forEach((line) => drawGuideLine(line));
+  guideLines.forEach((line) => drawGuideItem(line));
 
   if (activeLine) {
-    drawGuideLine(activeLine, true);
+    drawGuideItem(activeLine, true);
   }
 }
 
@@ -210,6 +228,14 @@ function setDrawMode(enabled) {
 
 function cycleDrawColor() {
   drawColorIndex = (drawColorIndex + 1) % drawColors.length;
+  updateLabels();
+}
+
+function toggleDrawShapeMode() {
+  drawShapeMode = drawShapeMode === "line" ? "free" : "line";
+  activeLine = null;
+  drawingPointerId = null;
+  redrawGuideLines();
   updateLabels();
 }
 
@@ -556,6 +582,10 @@ colorButton.addEventListener("click", () => {
   cycleDrawColor();
 });
 
+drawModeButton.addEventListener("click", () => {
+  toggleDrawShapeMode();
+});
+
 undoDrawButton.addEventListener("click", () => {
   undoGuideLine();
 });
@@ -573,13 +603,20 @@ drawCanvas.addEventListener("pointerdown", (event) => {
   drawCanvas.setPointerCapture(event.pointerId);
   drawingPointerId = event.pointerId;
   const point = pointFromEvent(event);
-  activeLine = {
-    x1: point.x,
-    y1: point.y,
-    x2: point.x,
-    y2: point.y,
-    color: drawColors[drawColorIndex].value
-  };
+  activeLine = drawShapeMode === "line"
+    ? {
+        type: "line",
+        x1: point.x,
+        y1: point.y,
+        x2: point.x,
+        y2: point.y,
+        color: drawColors[drawColorIndex].value
+      }
+    : {
+        type: "free",
+        points: [point],
+        color: drawColors[drawColorIndex].value
+      };
   redrawGuideLines();
 });
 
@@ -590,8 +627,12 @@ drawCanvas.addEventListener("pointermove", (event) => {
 
   event.preventDefault();
   const point = pointFromEvent(event);
-  activeLine.x2 = point.x;
-  activeLine.y2 = point.y;
+  if (activeLine.type === "free") {
+    activeLine.points.push(point);
+  } else {
+    activeLine.x2 = point.x;
+    activeLine.y2 = point.y;
+  }
   redrawGuideLines();
 });
 
@@ -602,12 +643,18 @@ drawCanvas.addEventListener("pointerup", (event) => {
 
   event.preventDefault();
   const point = pointFromEvent(event);
-  activeLine.x2 = point.x;
-  activeLine.y2 = point.y;
+  if (activeLine.type === "free") {
+    activeLine.points.push(point);
+  } else {
+    activeLine.x2 = point.x;
+    activeLine.y2 = point.y;
+  }
 
-  const dx = activeLine.x2 - activeLine.x1;
-  const dy = activeLine.y2 - activeLine.y1;
-  if (Math.hypot(dx, dy) > 0.01) {
+  const shouldKeep = activeLine.type === "free"
+    ? activeLine.points.length > 2
+    : Math.hypot(activeLine.x2 - activeLine.x1, activeLine.y2 - activeLine.y1) > 0.01;
+
+  if (shouldKeep) {
     guideLines.push(activeLine);
   }
 
