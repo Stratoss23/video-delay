@@ -1,0 +1,326 @@
+:root {
+  color-scheme: dark;
+  --bg: #07080b;
+  --panel: rgba(10, 11, 14, 0.82);
+  --panel-strong: rgba(11, 12, 16, 0.94);
+  --text: #fbf7ea;
+  --muted: #c6c0ad;
+  --gold: #ffd447;
+  --gold-deep: #c99613;
+  --red: #e33d3d;
+  --red-deep: #7d171b;
+  --blue: #246fe6;
+  --blue-deep: #102c62;
+  --white-ring: #f4ecd4;
+  --black-ring: #101116;
+  --accent: var(--gold);
+  --line: rgba(255, 255, 255, 0.18);
+  --shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 105%, rgba(255, 212, 71, 0.14) 0 9%, rgba(227, 61, 61, 0.10) 10% 18%, rgba(36, 111, 230, 0.10) 19% 29%, transparent 30%),
+    var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 34%),
+    var(--bg);
+}
+
+#sourceVideo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#delayCanvas {
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  object-fit: contain;
+}
+
+body.fill #delayCanvas {
+  object-fit: cover;
+}
+
+.panel {
+  position: absolute;
+  width: min(520px, calc(100vw - 32px));
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+    var(--panel-strong);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow);
+  text-align: center;
+  z-index: 5;
+}
+
+.panel.hidden {
+  display: none;
+}
+
+.panel h1 {
+  margin: 0 0 10px;
+  font-size: clamp(32px, 7vw, 54px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.panel p {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+.primary {
+  min-height: 52px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 8px;
+  color: #16100a;
+  background: linear-gradient(180deg, #ffe87a, var(--gold));
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 12px 26px rgba(255, 212, 71, 0.18);
+}
+
+.status {
+  min-height: 22px;
+  margin-top: 18px;
+  font-size: 15px;
+}
+
+.topbar {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  left: max(14px, env(safe-area-inset-left));
+  right: max(14px, env(safe-area-inset-right));
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.badge {
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    var(--panel);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 650;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.controls {
+  position: absolute;
+  left: max(14px, env(safe-area-inset-left));
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 64px 56px 82px 82px 64px minmax(170px, 1fr) minmax(190px, 1fr) 58px 64px;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 16px 50%, rgba(255, 212, 71, 0.16) 0 12px, rgba(227, 61, 61, 0.13) 13px 24px, rgba(36, 111, 230, 0.10) 25px 36px, transparent 37px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025)),
+    var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  z-index: 3;
+}
+
+.controls button {
+  width: 100%;
+  height: 56px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    rgba(255, 255, 255, 0.08);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+  touch-action: manipulation;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.controls button.active {
+  color: #171005;
+  border-color: rgba(255, 232, 122, 0.55);
+  background: linear-gradient(180deg, #ffe879, var(--gold));
+  box-shadow: 0 10px 22px rgba(255, 212, 71, 0.18);
+}
+
+#cameraButton {
+  background: linear-gradient(180deg, #3f8dff, var(--blue));
+  border-color: rgba(105, 164, 255, 0.7);
+  color: #f9fbff;
+}
+
+#mirrorButton {
+  background: linear-gradient(180deg, rgba(244, 236, 212, 0.24), rgba(244, 236, 212, 0.08));
+}
+
+#pauseButton,
+#playBufferButton {
+  height: 64px;
+  font-size: 15px;
+}
+
+#pauseButton {
+  color: #fff8f0;
+  background: linear-gradient(180deg, #ff6666, var(--red));
+  border-color: rgba(255, 117, 117, 0.7);
+}
+
+#pauseButton.active {
+  color: #180c0c;
+  background: linear-gradient(180deg, #ffe879, var(--gold));
+}
+
+#playBufferButton {
+  color: #171005;
+  background: linear-gradient(180deg, #ffe879, var(--gold));
+  border-color: rgba(255, 232, 122, 0.75);
+}
+
+#playBufferButton.active {
+  color: #f9fbff;
+  background: linear-gradient(180deg, #3f8dff, var(--blue));
+}
+
+#speedButton {
+  color: var(--black-ring);
+  background: linear-gradient(180deg, #fff8df, var(--white-ring));
+  border-color: rgba(244, 236, 212, 0.9);
+}
+
+#fitButton,
+#fullscreenButton {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035));
+}
+
+.controls button:disabled,
+input:disabled {
+  opacity: 0.42;
+}
+
+.delayControl,
+.frameControl {
+  display: grid;
+  grid-template-columns: 102px 1fr;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.delayControl span,
+.frameControl span {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  touch-action: pan-x;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--red), var(--blue), var(--white-ring));
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
+  margin-top: -10px;
+  border: 3px solid var(--black-ring);
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.46), 0 6px 16px rgba(0, 0, 0, 0.35);
+  -webkit-appearance: none;
+}
+
+@media (max-width: 700px) and (orientation: portrait) {
+  .controls {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .delayControl {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    min-height: 64px;
+  }
+
+  .frameControl {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    min-height: 64px;
+  }
+
+  #pauseButton,
+  #playBufferButton {
+    height: 62px;
+  }
+
+  #fitButton,
+  #fullscreenButton {
+    justify-self: stretch;
+  }
+}
