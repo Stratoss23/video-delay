@@ -96,7 +96,7 @@ button {
   top: calc(max(14px, env(safe-area-inset-top)) + 58px);
   right: max(14px, env(safe-area-inset-right));
   display: none;
-  width: clamp(150px, 18vw, 240px);
+  width: clamp(156px, 18vw, 240px);
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid rgba(244, 236, 212, 0.38);
@@ -109,6 +109,7 @@ button {
 
 @media (orientation: portrait) {
   .livePreview {
+    width: clamp(82px, 22vw, 132px);
     aspect-ratio: 9 / 16;
   }
 }
@@ -610,7 +611,8 @@ input[type="range"]::-webkit-slider-thumb {
     top: auto;
     right: max(12px, env(safe-area-inset-right));
     bottom: calc(max(14px, env(safe-area-inset-bottom)) + 250px);
-    width: min(42vw, 180px);
+    width: min(24vw, 132px);
+    aspect-ratio: 9 / 16;
   }
 
   #fitButton,
