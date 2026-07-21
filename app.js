@@ -57,6 +57,9 @@ let guideLines = [];
 const CAMERA_WIDTH = 1920;
 const CAMERA_HEIGHT = 1080;
 const CAMERA_FPS = 60;
+const BUFFER_WIDTH = 960;
+const BUFFER_HEIGHT = 540;
+const BUFFER_FPS = 30;
 const MAX_DELAY_SECONDS = 10;
 const SCRUB_HISTORY_SECONDS = 10;
 const SCRUB_FUTURE_SECONDS = 5;
@@ -152,8 +155,8 @@ function isPortraitViewport() {
 
 function configureCaptureCanvas() {
   const portrait = isPortraitViewport();
-  const width = fillMode && portrait ? CAMERA_HEIGHT : CAMERA_WIDTH;
-  const height = fillMode && portrait ? CAMERA_WIDTH : CAMERA_HEIGHT;
+  const width = fillMode && portrait ? BUFFER_HEIGHT : BUFFER_WIDTH;
+  const height = fillMode && portrait ? BUFFER_WIDTH : BUFFER_HEIGHT;
 
   if (captureCanvas.width !== width || captureCanvas.height !== height) {
     captureCanvas.width = width;
@@ -606,7 +609,7 @@ function playBufferFromCurrentFrame() {
 
     pausedFrameIndex += 1;
     const speed = playbackSpeeds[playbackSpeedIndex].multiplier;
-    bufferPlayTimer = setTimeout(playNext, 1000 / (CAMERA_FPS * speed));
+    bufferPlayTimer = setTimeout(playNext, 1000 / (BUFFER_FPS * speed));
   };
 
   playNext();
@@ -645,7 +648,7 @@ async function renderLoop(now = performance.now()) {
     return;
   }
 
-  if (now - lastCapture >= 1000 / CAMERA_FPS) {
+  if (now - lastCapture >= 1000 / BUFFER_FPS) {
     const shouldCapture = !paused || needsPausedFutureCapture();
     if (shouldCapture) {
       lastCapture = now;
@@ -855,7 +858,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=37", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=38", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
