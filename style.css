@@ -107,6 +107,12 @@ button {
   pointer-events: none;
 }
 
+@media (orientation: portrait) {
+  .livePreview {
+    aspect-ratio: 9 / 16;
+  }
+}
+
 body.cameraActive .livePreview {
   display: block;
 }

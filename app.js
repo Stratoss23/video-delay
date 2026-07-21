@@ -155,8 +155,8 @@ function isPortraitViewport() {
 
 function configureCaptureCanvas() {
   const portrait = isPortraitViewport();
-  const width = fillMode && portrait ? BUFFER_HEIGHT : BUFFER_WIDTH;
-  const height = fillMode && portrait ? BUFFER_WIDTH : BUFFER_HEIGHT;
+  const width = portrait ? BUFFER_HEIGHT : BUFFER_WIDTH;
+  const height = portrait ? BUFFER_WIDTH : BUFFER_HEIGHT;
 
   if (captureCanvas.width !== width || captureCanvas.height !== height) {
     captureCanvas.width = width;
@@ -858,7 +858,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=39", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=40", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
