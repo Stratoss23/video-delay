@@ -1,11 +1,12 @@
-const CACHE_NAME = "video-delay-v38";
+const CACHE_NAME = "video-delay-v39";
 const FILES = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "./logo.svg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -28,7 +29,8 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    fetch(event.request)
+    caches.match(event.request)
+      .then((cached) => cached || fetch(event.request))
       .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));

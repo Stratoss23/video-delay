@@ -858,7 +858,7 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=38", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker.register("./sw.js?v=39", { updateViaCache: "none" }).catch(() => {});
 }
 
 resizeCanvas();
