@@ -1,7 +1,11 @@
-const CACHE_NAME = "video-delay-v41";
+const CACHE_NAME = "video-delay-v42";
 const FILES = [
   "./",
   "./index.html",
+  "./style.css?v=42",
+  "./app.js?v=42",
+  "./manifest.webmanifest?v=42",
+  "./sw.js?v=42",
   "./style.css",
   "./app.js",
   "./manifest.webmanifest",
@@ -17,7 +21,11 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+      Promise.all(
+        keys
+          .filter((key) => key.startsWith("video-delay-") && key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      )
     )
   );
   self.clients.claim();

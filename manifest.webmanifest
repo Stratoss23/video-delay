@@ -1,8 +1,10 @@
 {
   "name": "Video Delay",
   "short_name": "Video Delay",
-  "description": "Oneskoreny obraz z kamery pre iPad.",
-  "start_url": "./index.html",
+  "description": "Delayed camera view for iPad training.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#07080b",
   "theme_color": "#07080b",

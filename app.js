@@ -84,6 +84,35 @@ function setStatus(message) {
   statusText.textContent = message;
 }
 
+async function warmOfflineCache() {
+  if (!("caches" in window)) {
+    return;
+  }
+
+  const cache = await caches.open("video-delay-offline-v42");
+  await cache.addAll([
+    "./",
+    "./index.html",
+    "./style.css?v=42",
+    "./app.js?v=42",
+    "./manifest.webmanifest?v=42",
+    "./icon.svg",
+    "./logo.svg",
+    "./sw.js?v=42"
+  ]);
+}
+
+async function prepareOfflineUse() {
+  try {
+    if (navigator.storage?.persist) {
+      await navigator.storage.persist();
+    }
+    await warmOfflineCache();
+  } catch (error) {
+    console.debug("Offline cache warmup skipped", error);
+  }
+}
+
 function setButtonLabel(button, icon, text) {
   button.innerHTML = `<span class="buttonIcon">${icon}</span><span class="buttonText">${text}</span>`;
 }
@@ -858,7 +887,12 @@ window.addEventListener("pagehide", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=41", { updateViaCache: "none" }).catch(() => {});
+  navigator.serviceWorker
+    .register("./sw.js?v=42", { updateViaCache: "none" })
+    .then((registration) => registration.update())
+    .then(() => navigator.serviceWorker.ready)
+    .then(() => prepareOfflineUse())
+    .catch(() => {});
 }
 
 resizeCanvas();
