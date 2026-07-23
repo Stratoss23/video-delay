@@ -89,17 +89,17 @@ async function warmOfflineCache() {
     return;
   }
 
-  const cache = await caches.open("video-delay-offline-v44");
+  const cache = await caches.open("video-delay-offline-v45");
   await cache.addAll([
     "./",
     "./index.html",
-    "./style.css?v=44",
-    "./app.js?v=44",
-    "./manifest.webmanifest?v=44",
+    "./style.css?v=45",
+    "./app.js?v=45",
+    "./manifest.webmanifest?v=45",
     "./icon.svg",
     "./club-logo.png",
     "./logo.svg",
-    "./sw.js?v=44"
+    "./sw.js?v=45"
   ]);
 }
 
@@ -889,7 +889,7 @@ window.addEventListener("pagehide", () => {
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
-    .register("./sw.js?v=44", { updateViaCache: "none" })
+    .register("./sw.js?v=45", { updateViaCache: "none" })
     .then((registration) => registration.update())
     .then(() => navigator.serviceWorker.ready)
     .then(() => prepareOfflineUse())

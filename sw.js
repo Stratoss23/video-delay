@@ -1,11 +1,11 @@
-const CACHE_NAME = "video-delay-v44";
+const CACHE_NAME = "video-delay-v45";
 const FILES = [
   "./",
   "./index.html",
-  "./style.css?v=44",
-  "./app.js?v=44",
-  "./manifest.webmanifest?v=44",
-  "./sw.js?v=44",
+  "./style.css?v=45",
+  "./app.js?v=45",
+  "./manifest.webmanifest?v=45",
+  "./sw.js?v=45",
   "./style.css",
   "./app.js",
   "./manifest.webmanifest",
